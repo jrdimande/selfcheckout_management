@@ -1,0 +1,17 @@
+{% extends 'base.html' %}{% load ui %}
+{% block title %}Venda #{{ object.pk }}{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3"><h1 class="page-title">Venda #{{ object.pk }}</h1><a class="btn btn-light" href="{% url 'sales:list' %}">Voltar</a></div>
+<div class="row g-3 mb-3">
+  <div class="col-md-4"><div class="card stat-card"><div class="card-body"><div class="label">Cliente</div><div class="fw-semibold"><a href="{{ object.customer.get_absolute_url }}">{{ object.customer.name }}</a></div><div class="small text-muted">{{ object.customer_id }}</div></div></div></div>
+  <div class="col-md-4"><div class="card stat-card"><div class="card-body"><div class="label">Data</div><div class="value">{{ object.sale_date|date:"d/m/Y H:i" }}</div></div></div></div>
+  <div class="col-md-4"><div class="card stat-card"><div class="card-body"><div class="label">Total</div><div class="value">{{ object.total|money }}</div></div></div></div>
+</div>
+<div class="card mb-3"><div class="card-header">Produtos comprados</div><div class="table-responsive"><table class="table mb-0">
+<thead><tr><th>Produto</th><th>Qtd</th><th>Preço unit.</th><th>Subtotal</th></tr></thead><tbody>
+{% for i in items %}<tr><td><a href="{{ i.product.get_absolute_url }}">{{ i.product.name }}</a></td><td>{{ i.quantity }}</td><td>{{ i.unit_price|money }}</td><td>{{ i.subtotal|money }}</td></tr>{% endfor %}</tbody></table></div></div>
+<div class="card"><div class="card-header">Pagamentos</div><div class="table-responsive"><table class="table mb-0"><thead><tr><th>ID</th><th>Método</th><th>Valor</th></tr></thead><tbody>
+{% for p in payments %}<tr><td><a href="{{ p.get_absolute_url }}">#{{ p.pk }}</a></td><td>{{ p.payment_method }}</td><td>{{ p.amount|money }}</td></tr>
+{% empty %}<tr><td colspan="3" class="text-muted text-center py-3">Sem pagamentos registados.</td></tr>{% endfor %}</tbody></table></div>
+{% if mismatch %}<div class="card-footer text-warning-emphasis bg-warning-subtle"><i class="bi bi-exclamation-triangle"></i> Total pago ({{ paid|money }}) difere do total da venda.</div>{% endif %}</div>
+{% endblock %}

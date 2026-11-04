@@ -1,0 +1,19 @@
+{% extends 'base.html' %}{% load ui %}
+{% block title %}{{ object.name }}{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div><h1 class="page-title">{{ object.name }}</h1><div class="text-muted small">{{ object.uuid }}</div></div>
+  <div><a class="btn btn-light" href="{% url 'customers:list' %}">Voltar</a>
+  {% if is_admin %}<a class="btn btn-primary" href="{% url 'customers:edit' object.pk %}"><i class="bi bi-pencil"></i> Editar</a>
+  <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-delete-url="{% url 'customers:delete' object.pk %}" data-delete-name="{{ object }}"><i class="bi bi-trash"></i></button>{% endif %}</div>
+</div>
+<div class="row g-3 mb-3">
+  <div class="col-md-4"><div class="card stat-card"><div class="card-body"><div class="label">Saldo</div><div class="value">{{ object.balance|money }}</div></div></div></div>
+  <div class="col-md-4"><div class="card stat-card"><div class="card-body"><div class="label">Total gasto</div><div class="value">{{ spent|money }}</div></div></div></div>
+  <div class="col-md-4"><div class="card stat-card"><div class="card-body"><div class="label">Compras</div><div class="value">{{ purchases }}</div></div></div></div>
+</div>
+<div class="card"><div class="card-header">Histórico de compras (últimas 50)</div><div class="table-responsive"><table class="table table-hover mb-0">
+<thead><tr><th>Venda</th><th>Data</th><th>Pagamento</th><th>Total</th></tr></thead><tbody>
+{% for s in sales %}<tr><td><a href="{{ s.get_absolute_url }}">#{{ s.pk }}</a></td><td>{{ s.sale_date|date:"d/m/Y H:i" }}</td><td>{{ s.payment_methods|default:"—" }}</td><td>{{ s.total|money }}</td></tr>
+{% empty %}<tr><td colspan="4" class="text-center text-muted py-4">Sem compras.</td></tr>{% endfor %}</tbody></table></div></div>
+{% endblock %}

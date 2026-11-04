@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block title %}Auditoria #{{ object.pk }}{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3"><h1 class="page-title">{{ object.get_action_display }} · {{ object.model }}</h1><a class="btn btn-light" href="{% url 'audit:list' %}">Voltar</a></div>
+<div class="card mb-3"><div class="card-body small">
+<b>Utilizador:</b> {{ object.username }} &nbsp; <b>Data:</b> {{ object.created_at|date:"d/m/Y H:i:s" }} &nbsp; <b>Registo:</b> {{ object.object_repr }} ({{ object.object_id }})</div></div>
+<div class="card"><table class="table mb-0"><thead><tr><th>Campo</th><th>Valor anterior</th><th>Valor novo</th></tr></thead><tbody>
+{% for k, b, a, changed in object.diff %}<tr {% if changed %}class="table-warning"{% endif %}><td>{{ k }}</td><td>{{ b }}</td><td>{{ a }}</td></tr>{% endfor %}</tbody></table></div>
+{% endblock %}

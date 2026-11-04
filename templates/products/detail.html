@@ -1,0 +1,21 @@
+{% extends 'base.html' %}{% load ui %}
+{% block title %}{{ object.name }}{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div><h1 class="page-title">{{ object.name }}</h1><div class="text-muted small">{{ object.uuid }}</div></div>
+  <div><a class="btn btn-light" href="{% url 'products:list' %}">Voltar</a>
+  {% if is_admin %}<a class="btn btn-outline-primary" href="{% url 'products:price' object.pk %}"><i class="bi bi-tag"></i> Preço</a>
+  <a class="btn btn-primary" href="{% url 'products:edit' object.pk %}"><i class="bi bi-pencil"></i> Editar</a>
+  <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-delete-url="{% url 'products:delete' object.pk %}" data-delete-name="{{ object }}"><i class="bi bi-trash"></i></button>{% endif %}</div>
+</div>
+<div class="row g-3 mb-3">
+  <div class="col-6 col-lg-3"><div class="card stat-card"><div class="card-body"><div class="label">Preço</div><div class="value">{{ object.price|money }}</div></div></div></div>
+  <div class="col-6 col-lg-3"><div class="card stat-card"><div class="card-body"><div class="label">Stock (mín. {{ object.minimum_stock }})</div><div class="value">{{ object.stock }} <span class="badge text-bg-{% if object.stock_status == 'OK' %}success{% elif object.stock_status == 'Stock baixo' %}warning{% else %}danger{% endif %} fs-6">{{ object.stock_status }}</span></div></div></div></div>
+  <div class="col-6 col-lg-3"><div class="card stat-card"><div class="card-body"><div class="label">Unidades vendidas</div><div class="value">{{ sold }}</div></div></div></div>
+  <div class="col-6 col-lg-3"><div class="card stat-card"><div class="card-body"><div class="label">Receita</div><div class="value">{{ revenue|money }}</div></div></div></div>
+</div>
+<div class="card"><div class="card-header">Últimas vendas deste produto</div><div class="table-responsive"><table class="table table-hover mb-0">
+<thead><tr><th>Venda</th><th>Data</th><th>Cliente</th><th>Qtd</th><th>Preço unit.</th><th>Subtotal</th></tr></thead><tbody>
+{% for i in recent %}<tr><td><a href="{{ i.sale.get_absolute_url }}">#{{ i.sale_id }}</a></td><td>{{ i.sale.sale_date|date:"d/m/Y H:i" }}</td><td>{{ i.sale.customer.name }}</td><td>{{ i.quantity }}</td><td>{{ i.unit_price|money }}</td><td>{{ i.subtotal|money }}</td></tr>
+{% empty %}<tr><td colspan="6" class="text-center text-muted py-4">Sem vendas.</td></tr>{% endfor %}</tbody></table></div></div>
+{% endblock %}

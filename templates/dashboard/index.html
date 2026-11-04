@@ -1,0 +1,43 @@
+{% extends 'base.html' %}{% load ui %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<h1 class="page-title mb-3">Dashboard</h1>
+<div class="row g-3 mb-3">
+  <div class="col-6 col-xl-2"><div class="card stat-card"><div class="card-body d-flex gap-3 align-items-center"><div class="icon"><i class="bi bi-people"></i></div><div><div class="label">Clientes</div><div class="value">{{ s.total_customers }}</div></div></div></div></div>
+  <div class="col-6 col-xl-2"><div class="card stat-card"><div class="card-body d-flex gap-3 align-items-center"><div class="icon"><i class="bi bi-box-seam"></i></div><div><div class="label">Produtos</div><div class="value">{{ s.total_products }}</div></div></div></div></div>
+  <div class="col-6 col-xl-2"><div class="card stat-card"><div class="card-body d-flex gap-3 align-items-center"><div class="icon"><i class="bi bi-receipt"></i></div><div><div class="label">Vendas</div><div class="value">{{ s.total_sales }}</div></div></div></div></div>
+  <div class="col-6 col-xl-2"><div class="card stat-card"><div class="card-body d-flex gap-3 align-items-center"><div class="icon"><i class="bi bi-cash-coin"></i></div><div><div class="label">Receita total</div><div class="value fs-5">{{ s.total_revenue|money }}</div></div></div></div></div>
+  <div class="col-6 col-xl-2"><div class="card stat-card"><div class="card-body d-flex gap-3 align-items-center"><div class="icon"><i class="bi bi-calendar-day"></i></div><div><div class="label">Hoje</div><div class="value fs-5">{{ s.sales_today }} · {{ s.revenue_today|money }}</div></div></div></div></div>
+  <div class="col-6 col-xl-2"><div class="card stat-card"><div class="card-body d-flex gap-3 align-items-center"><div class="icon" style="background:#fef3c7;color:#d97706"><i class="bi bi-exclamation-triangle"></i></div><div><div class="label">Stock baixo</div><div class="value">{{ s.low_stock_count }}</div></div></div></div></div>
+</div>
+<div class="row g-3 mb-3">
+  <div class="col-lg-8"><div class="card"><div class="card-header">Vendas diárias (últimos 30 dias)</div><div class="card-body"><div class="chart-box"><canvas id="cDaily"></canvas></div></div></div></div>
+  <div class="col-lg-4"><div class="card"><div class="card-header">Métodos de pagamento</div><div class="card-body"><div class="chart-box"><canvas id="cPay"></canvas></div></div></div></div>
+  <div class="col-12"><div class="card"><div class="card-header">Receita mensal (12 meses)</div><div class="card-body"><div class="chart-box"><canvas id="cMonthly"></canvas></div></div></div></div>
+</div>
+<div class="row g-3">
+  <div class="col-lg-6"><div class="card"><div class="card-header">Últimas vendas</div><table class="table table-hover mb-0 small"><tbody>
+    {% for r in s.recent_sales %}<tr><td><a href="{% url 'sales:detail' r.id %}">#{{ r.id }}</a></td><td>{{ r.sale_date|date:"d/m H:i" }}</td><td>{{ r.customer_name }}</td><td class="text-end">{{ r.total|money }}</td></tr>{% empty %}<tr><td class="text-muted text-center py-3">Sem vendas.</td></tr>{% endfor %}</tbody></table></div></div>
+  <div class="col-lg-6"><div class="card"><div class="card-header">Produtos mais vendidos</div><table class="table table-hover mb-0 small"><tbody>
+    {% for r in s.top_products %}<tr><td><a href="{% url 'products:detail' r.uuid %}">{{ r.name }}</a></td><td>{{ r.quantity }} un.</td><td class="text-end">{{ r.revenue|money }}</td></tr>{% empty %}<tr><td class="text-muted text-center py-3">Sem dados.</td></tr>{% endfor %}</tbody></table></div></div>
+  <div class="col-lg-6"><div class="card"><div class="card-header">Clientes com mais compras</div><table class="table table-hover mb-0 small"><tbody>
+    {% for r in s.top_customers %}<tr><td><a href="{% url 'customers:detail' r.uuid %}">{{ r.name }}</a></td><td>{{ r.purchases }} compras</td><td class="text-end">{{ r.spent|money }}</td></tr>{% empty %}<tr><td class="text-muted text-center py-3">Sem dados.</td></tr>{% endfor %}</tbody></table></div></div>
+  <div class="col-lg-6"><div class="card"><div class="card-header">Alertas de stock</div><table class="table table-hover mb-0 small"><tbody>
+    {% for r in s.low_stock %}<tr><td><a href="{% url 'products:detail' r.uuid %}">{{ r.name }}</a></td><td>{{ r.stock }} / mín. {{ r.minimum_stock }}</td></tr>{% empty %}<tr><td class="text-muted text-center py-3">Sem alertas.</td></tr>{% endfor %}</tbody></table></div></div>
+</div>
+{{ chart|json_script:"chart-data" }}
+{% endblock %}
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<script>
+const D = JSON.parse(document.getElementById('chart-data').textContent);
+const blue = '#2563eb', palette = ['#2563eb','#60a5fa','#0ea5e9','#94a3b8','#1e3a8a','#38bdf8'];
+new Chart('cDaily', {data:{labels:D.daily.labels, datasets:[
+  {type:'bar', label:'Receita', data:D.daily.revenue, backgroundColor:'#bfdbfe', yAxisID:'y'},
+  {type:'line', label:'Nº vendas', data:D.daily.sales, borderColor:blue, tension:.3, yAxisID:'y1'}]},
+  options:{maintainAspectRatio:false, scales:{y1:{position:'right', grid:{display:false}, ticks:{precision:0}}}}});
+new Chart('cMonthly', {type:'bar', data:{labels:D.monthly.labels, datasets:[{label:'Receita', data:D.monthly.revenue, backgroundColor:blue, borderRadius:6}]},
+  options:{maintainAspectRatio:false, plugins:{legend:{display:false}}}});
+new Chart('cPay', {type:'doughnut', data:{labels:D.payments.labels, datasets:[{data:D.payments.totals, backgroundColor:palette}]},
+  options:{maintainAspectRatio:false, plugins:{legend:{position:'bottom'}}}});
+</script>{% endblock %}

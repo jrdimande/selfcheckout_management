@@ -1,0 +1,26 @@
+:root{--bs-primary:#2563eb;--bs-primary-rgb:37,99,235;--bs-link-color:#2563eb;--bs-link-hover-color:#1d4ed8;
+--sb:#0f172a;--bg:#f1f5f9}
+body{background:var(--bg);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:#1e293b}
+.btn-primary{--bs-btn-bg:#2563eb;--bs-btn-border-color:#2563eb;--bs-btn-hover-bg:#1d4ed8;--bs-btn-hover-border-color:#1d4ed8;--bs-btn-active-bg:#1e40af}
+.btn-outline-primary{--bs-btn-color:#2563eb;--bs-btn-border-color:#2563eb;--bs-btn-hover-bg:#2563eb}
+.sidebar{position:fixed;inset:0 auto 0 0;width:250px;background:var(--sb);padding:1rem .75rem;overflow-y:auto;z-index:1030;transition:transform .2s}
+.sidebar .brand{color:#fff;font-weight:700;font-size:1.1rem;padding:.5rem .75rem 1.25rem;display:flex;gap:.6rem;align-items:center}
+.sidebar .brand i{background:#2563eb;border-radius:.6rem;padding:.35rem .5rem}
+.sidebar .nav-section{color:#64748b;font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;padding:1rem .75rem .35rem}
+.sidebar .nav-link{color:#cbd5e1;border-radius:.5rem;padding:.55rem .75rem;display:flex;gap:.7rem;align-items:center;font-size:.92rem}
+.sidebar .nav-link:hover{background:#1e293b;color:#fff}
+.sidebar .nav-link.active{background:#2563eb;color:#fff}
+.main{margin-left:250px;min-height:100vh}
+.topbar{background:#fff;border-bottom:1px solid #e2e8f0;padding:.7rem 1.5rem;position:sticky;top:0;z-index:1020}
+.content{padding:1.5rem}
+.card{border:0;border-radius:.85rem;box-shadow:0 1px 3px rgba(15,23,42,.08)}
+.card-header{background:#fff;border-bottom:1px solid #eef2f7;font-weight:600;border-radius:.85rem .85rem 0 0!important}
+.stat-card .icon{width:44px;height:44px;border-radius:.75rem;display:flex;align-items:center;justify-content:center;font-size:1.3rem;background:#dbeafe;color:#2563eb}
+.stat-card .value{font-size:1.45rem;font-weight:700;line-height:1.2}
+.stat-card .label{color:#64748b;font-size:.8rem}
+.table thead th{font-size:.75rem;text-transform:uppercase;letter-spacing:.04em;color:#64748b;background:#f8fafc;white-space:nowrap}
+.page-title{font-size:1.4rem;font-weight:700;margin:0}
+.filter-form label{font-size:.75rem;color:#64748b;margin-bottom:.15rem}
+.chart-box{position:relative;height:280px}
+@media(max-width:991px){.sidebar{transform:translateX(-100%)}.sidebar.show{transform:none}.main{margin-left:0}}
+.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0f172a,#1e40af)}

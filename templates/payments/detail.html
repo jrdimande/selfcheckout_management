@@ -1,0 +1,11 @@
+{% extends 'base.html' %}{% load ui %}
+{% block title %}Pagamento #{{ object.pk }}{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3"><h1 class="page-title">Pagamento #{{ object.pk }}</h1><a class="btn btn-light" href="{% url 'payments:list' %}">Voltar</a></div>
+<div class="card" style="max-width:560px"><ul class="list-group list-group-flush">
+<li class="list-group-item d-flex justify-content-between"><span>Valor</span><strong>{{ object.amount|money }}</strong></li>
+<li class="list-group-item d-flex justify-content-between"><span>Método</span><strong>{{ object.payment_method }}</strong></li>
+<li class="list-group-item d-flex justify-content-between"><span>Venda</span><a href="{{ object.sale.get_absolute_url }}">#{{ object.sale_id }}</a></li>
+<li class="list-group-item d-flex justify-content-between"><span>Data (da venda)</span><span>{{ object.sale.sale_date|date:"d/m/Y H:i" }}</span></li>
+<li class="list-group-item d-flex justify-content-between"><span>Cliente</span><a href="{{ object.sale.customer.get_absolute_url }}">{{ object.sale.customer.name }}</a></li>
+</ul><div class="card-footer small text-muted">A tabela de pagamentos não guarda estado nem data própria.</div></div>{% endblock %}
